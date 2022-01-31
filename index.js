@@ -1,21 +1,22 @@
 const mysql = require('mysql2');
 const inquier = require('inquirer');
 const table = require('console.table');
+const inquirer = require('inquirer');
 
 const connection = mysql.createConnection({
-    host: 'localhost',
+  host: 'localhost',
 
-    user: 'root',
+  user: 'root',
 
-    password: '',
+  password: '',
 
-    database: 'employees'
+  database: 'employees'
 });
 
 connection.connect(err => {
-    if (err) throw err;
-    console.log('connected');    
-    startQuestions();
+  if (err) throw err;
+  console.log('connected');    
+  startQuestions();
 });
 
 const startQuestions = () => {
@@ -112,11 +113,97 @@ viewEmployees = () => {
 }; // End viewEmployee function
 
 addDepartment = () => {
+  inquier.prompt([
+    {
+      type: 'input',
+      name: 'addDepartment',
+      message: 'What department would you like to add?',
+      validate: addDepartment => {
+        if (addDepartment) {
+            return true;
+        } else {
+            console.log('Please enter a department!');
+            return false;
+        }
+      }
+    }
+  ])
+  .then(answer => {
+    const sql = `INSERT INTO department (name)
+                VALUES (?)`;
+    connection.query(sql, answer.addDepartment, (err, result) => {
+      if (err) throw err;
+      console.log('Added ' + answer.addDepartment + " to departments!"); 
 
+      viewDepartment();
+    });
+  });
 }; // end addDepartment function
 
 addRole = () => {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'role',
+      message: 'What is the name of the role?',
+      validate: addRole => {
+        if (addRole) {
+          return true;
+        } else {
+          console.log('Please enter a role!');
+          return false;
+        }
+      }
+    },
+    {
+      type: 'input',
+      name: 'salary',
+      message: "What is the role's salary",
+      validate: addSalary => {
+        if (addSalary) {
+          return true;
+        } else {
+          console.log('Please enter a salary!');
+          return false;
+        }
+      }
+    }
+  ])
+  .then(answer => {
+    const params = [answer.role, answer.salary];
 
+    // grab dept from department table
+    const rolesSql = `SELECT name, id FROM department`; 
+
+    connection.query(rolesSql, (err, data) => {
+      if (err) throw err; 
+  
+      const dept = data.map(({ name, id }) => ({ name: name, value: id }));
+
+      inquirer.prompt([
+      {
+        type: 'list', 
+        name: 'dept',
+        message: "What department is this role in?",
+        choices: dept
+      }
+      ])
+        .then(deptChoice => {
+          const dept = deptChoice.dept;
+          params.push(dept);
+
+          const sql = `INSERT INTO roles (title, salary, department_id)
+                      VALUES (?, ?, ?)`;
+
+          connection.query(sql, params, (err, result) => {
+            if (err) throw err;
+            console.log('Added' + answer.role + " to roles!"); 
+
+            viewRoles();
+          });
+        });
+    });
+  });
 }; // end addRole function
 
 addEmployee = () => {
