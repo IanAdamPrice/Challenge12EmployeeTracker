@@ -1,19 +1,38 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const inquier = require('inquirer');
 const table = require('console.table');
-const { connect } = require('./db/connection');
-const Connection = require('mysql2/typings/mysql/lib/Connection');
 
-startQuestions => {
-  const questions = [{
+const connection = mysql.createConnection({
+    host: 'localhost',
+
+    user: 'root',
+
+    password: '',
+
+    database: 'employees'
+});
+
+connection.connect(err => {
+    if (err) throw err;
+    console.log('connected.');
+    startQuestions();
+});
+
+const startQuestions = () => {
+  inquier.prompt ([
+      {
       type: 'list',
-      name: 'action',
+      name: 'choices',
       message: 'Please make a selection',
-      loop: false,
-      choices: [' View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role']
-  }]
-
-  inquier.prompt(questions)
+      choices: ['View all departments', 
+                'View all roles', 
+                'View all employees', 
+                'Add a department', 
+                'Add a role', 
+                'Add an employee', 
+                'Update an employee role']
+       }
+    ])
     .then(response => {
       switch(response.action) {
           case 'View all departments':
@@ -46,22 +65,30 @@ startQuestions => {
     });
 }; // end inquirer
 
-const viewAll = () => {
+viewDepartment = () => {
 
-};
+}; // end viewDepartment function
 
-const addDepartment = () => {
+viewRoles = () => {
 
-};
+}; // end viewRoles function
 
-const addRole = () => {
+viewEmployee = () => {
 
-};
+}; // End viewEmployee function
 
-const addEmployee = () => {
+addDepartment = () => {
 
-};
+}; // end addDepartment function
 
-const updateEmployee = () => {
+addRole = () => {
 
-};
+}; // end addRole function
+
+addEmployee = () => {
+
+}; // end addEmployee function
+
+updateEmployee = () => {
+
+}; // end updateEmployee function
