@@ -37,7 +37,31 @@ startQuestions => {
           case 'Update an employee role':
               updateEmployee();
               break; 
-                  
+          default:
+              Connection.end();         
       }
+    })
+    .catch(err => {
+        console.log(err);
     });
 }; // end inquirer
+
+const viewAll = () => {
+
+};
+
+const addDepartment = () => {
+
+};
+
+const addRole = () => {
+
+};
+
+const addEmployee = () => {
+
+};
+
+const updateEmployee = () => {
+
+};
