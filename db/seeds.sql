@@ -9,7 +9,7 @@ VALUES
 INSERT INTO roles
     (title, salary, department_id)
 VALUES
-    ('IT manager', 80000, 1),
+    ('IT', 80000, 1),
     ('Clerk', 40000, 3),
     ('Electrician', 70000, 4),
     ('Secretary', 60000, 2);
