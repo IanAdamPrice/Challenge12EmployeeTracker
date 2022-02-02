@@ -18,7 +18,7 @@ connection.connect(err => {
 
 const startQuestions = () => {
   inquier.prompt ([
-      {
+    {
       type: 'list',
       name: 'choices',
       message: 'Please make a selection',
@@ -29,7 +29,7 @@ const startQuestions = () => {
                 'Add a role', 
                 'Add an employee', 
                 'Update an employee role']
-       }
+    }
     ])
     .then((choice) => {
       const { choices } =  choice;
@@ -65,48 +65,48 @@ const startQuestions = () => {
 };
 
 const viewDepartment = () => {
-    console.log('Showing all departments...\n');
-    const sql = `SELECT department.id AS id, department.name AS department FROM department`; 
+  console.log('Showing all departments');
+  const sql = `SELECT department.id AS id, department.name AS department FROM department`; 
   
-    connection.query(sql, (err, rows) => {
-      if (err) throw err;
-      console.table(rows);
-      startQuestions();
-    });
+  connection.query(sql, (err, rows) => {
+    if (err) throw err;
+    console.table(rows);
+    startQuestions();
+  });
 }; // end viewDepartment function
 
 viewRoles = () => {
-    console.log('Showing all roles...\n');
-    const sql = `SELECT roles.id, roles.title, department.name AS department 
-                FROM roles 
-                INNER JOIN department ON roles.department_id = department.id`; 
+  console.log('Showing all roles');
+  const sql = `SELECT roles.id, roles.title, department.name AS department 
+              FROM roles 
+              INNER JOIN department ON roles.department_id = department.id`; 
   
-    connection.query(sql, (err, rows) => {
-      if (err) throw err;
-      console.table(rows);
-      startQuestions();
-    });
+  connection.query(sql, (err, rows) => {
+    if (err) throw err;
+    console.table(rows);
+    startQuestions();
+  });
 }; // end viewRoles function
 
 viewEmployees = () => {
-    console.log('Showing all employees...\n');
-    const sql = `SELECT employee.id, 
-                    employee.first_name, 
-                    employee.last_name, 
-                    roles.title, 
-                    department.name AS department,
-                    roles.salary, 
-                    CONCAT (manager.first_name, " ", manager.last_name) AS manager
+  console.log('Showing all employees');
+  const sql = `SELECT employee.id, 
+                  employee.first_name, 
+                  employee.last_name, 
+                  roles.title, 
+                  department.name AS department,
+                  roles.salary, 
+                  CONCAT (manager.first_name, " ", manager.last_name) AS manager
                 FROM employee
-                    LEFT JOIN roles ON employee.role_id = roles.id
-                    LEFT JOIN department ON roles.department_id = department.id
-                    LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+                  LEFT JOIN roles ON employee.role_id = roles.id
+                  LEFT JOIN department ON roles.department_id = department.id
+                  LEFT JOIN employee manager ON employee.manager_id = manager.id`;
 
-    connection.query(sql, (err, rows) => {
-      if (err) throw (err);
-      console.table(rows);
-      startQuestions();
-    });
+  connection.query(sql, (err, rows) => {
+    if (err) throw (err);
+    console.table(rows);
+    startQuestions();
+  });
 }; // End viewEmployee function
 
 addDepartment = () => {
@@ -257,34 +257,34 @@ addEmployee = () => {
 
         const managerSql = `SELECT * FROM employee`;
 
-              connection.query(managerSql, (err, data) => {
-                if (err) throw err;
+          connection.query(managerSql, (err, data) => {
+            if (err) throw err;
 
-                const managers = data.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
+            const managers = data.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
 
-                inquirer.prompt([
-                  {
-                    type: 'list',
-                    name: 'manager',
-                    message: "Who is the employee's manager?",
-                    choices: managers
-                  }
-                ])
-                  .then(managerSelect => {
-                    const manager = managerSelect.manager;
-                    params.push(manager);
+            inquirer.prompt([
+              {
+                type: 'list',
+                name: 'manager',
+                message: "Who is the employee's manager?",
+                choices: managers
+              }
+              ])
+              .then(managerSelect => {
+                const manager = managerSelect.manager;
+                params.push(manager);
 
-                    const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-                    VALUES (?, ?, ?, ?)`;
+                const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                VALUES (?, ?, ?, ?)`;
 
-                    connection.query(sql, params, (err, result) => {
-                    if (err) throw err;
-                    console.log("Employee has been added!")
+                connection.query(sql, params, (err, result) => {
+                  if (err) throw err;
+                  console.log("Employee has been added!")
 
-                    viewEmployees();
-                    });
-                  });
+                  viewEmployees();
+                });
               });
+          });
       });
     });
   });
@@ -326,23 +326,23 @@ updateEmployee = () => {
               choices: roles
             }
           ])
-              .then(roleChoice => {
-              const role = roleChoice.role;
-              params.push(role); 
+          .then(roleChoice => {
+            const role = roleChoice.role;
+            params.push(role); 
               
-              let employee = params[0]
-              params[0] = role
-              params[1] = employee 
+            let employee = params[0]
+            params[0] = role
+            params[1] = employee 
               
-              const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+            const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
 
-              connection.query(sql, params, (err, result) => {
-                if (err) throw err;
+            connection.query(sql, params, (err, result) => {
+              if (err) throw err;
               console.log("Employee has been updated!");
             
               viewEmployees();
-              });
-              });
+            });
+          });
       });
     });
   });

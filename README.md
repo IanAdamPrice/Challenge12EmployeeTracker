@@ -1,7 +1,7 @@
 # Challenge12EmployeeTracker
 
 ## Visual Demo
-
+![Employee tracker demo](https://github.com/IanAdamPrice/Challenge12EmployeeTracker/blob/main/demo/Employee%20Tracker.gif?raw=true)
 ## Description
 Employee-tracker is a node application that utilizes Node.js, Inquirer, and MySQL. It is a command-line application that allows you to add a departments, roles, and employees that is stored to a table where you can view all employees. 
 
